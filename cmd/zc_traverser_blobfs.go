@@ -350,11 +350,6 @@ func (t *blobFSTraverser) Traverse(preprocessor objectMorpher, processor objectP
 			// if directory is renamed then also it'll be considered changed. Note that a renamed directory needs to be fully enumerated at the target as even
 			// files with same names as in the target could be entirely different files. This forces us to enumerate the target directory if the source
 			// directory is seen to have changed, since we don’t know if it was renamed, in which case we must enumerate the target directory.
-			//
-			// We additionally check hasAnAncestorThatIsPossiblyRenamed() which returns True if any of the ancestors of ‘currentDirPath’ could have been possibly
-			// renamed. For any “possibly renamed” directory we must enumerate all the children/grandchildren target directories to ensure that we copy all
-			// their children correctly, even though the ctime/mtime of those directories won’t be more than LastSyncTime.
-			//
 			if !t.hasDirectoryChangedSinceLastSync(currentDirPath) {
 				goto FinalizeDirectory
 			}
@@ -445,7 +440,7 @@ func (t *blobFSTraverser) Traverse(preprocessor objectMorpher, processor objectP
 					name:               folderRelativePath,
 					relativePath:       folderRelativePath,
 					entityType:         common.EEntityType.Folder(),
-					lastModifiedTime:   azbfs.ToTime(resp.LastModified()),
+					lastModifiedTime:   extendedProp.MTime(),
 					size:               resp.ContentLength(),
 					cacheControl:       resp.CacheControl(),
 					contentDisposition: resp.ContentDisposition(),

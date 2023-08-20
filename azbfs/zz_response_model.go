@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type Metadata map[string]string
@@ -424,15 +423,4 @@ func (dr DownloadResponse) RequestID() string {
 // Version returns the value for header x-ms-version.
 func (dr DownloadResponse) Version() string {
 	return dr.dr.XMsVersion()
-}
-
-func ToTime(s string) time.Time {
-	if s == "" {
-		return time.Time{}
-	}
-	t, err := time.Parse(time.RFC1123, s)
-	if err != nil {
-		t = time.Time{}
-	}
-	return t
 }
