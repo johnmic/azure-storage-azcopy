@@ -2,8 +2,38 @@ package azbfs
 
 import (
 	"context"
+	"encoding/base64"
 	"net/http"
+	"strings"
+	"time"
 )
+
+type Metadata map[string]string
+
+const mdPrefix = "x-ms-meta-"
+
+const mdPrefixLen = len(mdPrefix)
+
+// NewMetadata returns user-defined key/value pairs.
+func NewMetadata(properties string) (Metadata, error) {
+	md := Metadata{}
+	pairs := strings.Split(properties, ",")
+	for _, pair := range pairs {
+		parts := strings.SplitN(pair, "=", 2)
+		key := strings.ToLower(parts[0])
+		value := parts[1]
+
+		// Decode the value from base64
+		decodedValue, err := base64.StdEncoding.DecodeString(value)
+		if err != nil {
+			return md, err
+		}
+
+		md[key] = string(decodedValue)
+	}
+
+	return md, nil
+}
 
 // DirectoryCreateResponse is the CreatePathResponse response type returned for directory specific operations
 // The type is used to establish difference in the response for file and directory operations since both type of
@@ -104,6 +134,11 @@ func (ddr DirectoryDeleteResponse) XMsVersion() string {
 // The type is used to establish difference in the response for file and directory operations since both type of
 // operations has same response type.
 type DirectoryGetPropertiesResponse PathGetPropertiesResponse
+
+// NewMetadata returns user-defined key/value pairs.
+func (dgpr DirectoryGetPropertiesResponse) NewMetadata() (Metadata, error) {
+	return NewMetadata(dgpr.XMsProperties())
+}
 
 // Response returns the raw HTTP response object.
 func (dgpr DirectoryGetPropertiesResponse) Response() *http.Response {
@@ -389,4 +424,15 @@ func (dr DownloadResponse) RequestID() string {
 // Version returns the value for header x-ms-version.
 func (dr DownloadResponse) Version() string {
 	return dr.dr.XMsVersion()
+}
+
+func ToTime(s string) time.Time {
+	if s == "" {
+		return time.Time{}
+	}
+	t, err := time.Parse(time.RFC1123, s)
+	if err != nil {
+		t = time.Time{}
+	}
+	return t
 }
