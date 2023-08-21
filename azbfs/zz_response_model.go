@@ -16,8 +16,8 @@ const mdPrefixLen = len(mdPrefix)
 // NewMetadata returns user-defined key/value pairs.
 func NewMetadata(properties string) (Metadata, error) {
 	md := Metadata{}
-	pairs := strings.Split(properties, ",")
-	for _, pair := range pairs {
+	kvpairs := strings.Split(properties, ",")
+	for _, pair := range kvpairs {
 		parts := strings.SplitN(pair, "=", 2)
 		key := strings.ToLower(parts[0])
 		value := parts[1]

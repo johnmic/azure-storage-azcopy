@@ -431,7 +431,7 @@ func (t *blobFSTraverser) Traverse(preprocessor objectMorpher, processor objectP
 				folderRelativePath := strings.TrimPrefix(dirInfo, bfsURLParts.DirectoryOrFilePath)
 				folderRelativePath = strings.TrimPrefix(folderRelativePath, common.AZCOPY_PATH_SEPARATOR_STRING)
 
-				subDirURL := currentDirURL.NewDirectoryURL(folderRelativePath)
+				subDirURL := t.generateDirUrl(bfsURLParts, folderRelativePath)
 				resp, err := subDirURL.GetProperties(t.ctx)
 
 				metadata, _ := resp.NewMetadata()
