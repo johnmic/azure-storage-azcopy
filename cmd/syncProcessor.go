@@ -33,6 +33,7 @@ import (
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 	"github.com/Azure/azure-storage-blob-go/azblob"
+	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
 	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
 	"github.com/aymanjarrousms/azure-storage-azcopy/v10/ste"
 	"github.com/aymanjarrousms/azure-storage-file-go/azfile"
@@ -432,6 +433,15 @@ func (b *remoteResourceDeleter) deleteFolderRecursively(object StoredObject) err
 			fmt.Printf("Object [%s] Deletion failed with error: %v", object.relativePath, err)
 			return err
 		}
+	case common.ELocation.BlobFS():
+		blobUrlParts := azbfs.NewBfsURLParts(*b.rootURL)
+		blobUrlParts.DirectoryOrFilePath = path.Join(blobUrlParts.DirectoryOrFilePath, object.relativePath)
+		dirUrl := azbfs.NewFileSystemURL(blobUrlParts.URL(), b.p)
+		_, err := dirUrl.Delete(b.ctx)
+		if err != nil {
+			fmt.Printf("Object [%s] Deletion failed with error: %v", object.relativePath, err)
+			return err
+		}
 	}
 
 	return nil
@@ -476,6 +486,11 @@ func (b *remoteResourceDeleter) delete(object StoredObject) error {
 					}
 				}
 			}
+		case common.ELocation.BlobFS():
+			fileURLParts := azbfs.NewBfsURLParts(*b.rootURL)
+			fileURLParts.DirectoryOrFilePath = path.Join(fileURLParts.DirectoryOrFilePath, object.relativePath)
+			fileURL := azbfs.NewFileURL(fileURLParts.URL(), b.p)
+			_, err = fileURL.Delete(b.ctx)
 		default:
 			panic("not implemented, check your code")
 		}
@@ -528,6 +543,9 @@ func (b *remoteResourceDeleter) delete(object StoredObject) error {
 			return nil
 
 		case common.ELocation.File():
+			b.deleteDirEnumerationChan <- object
+			return nil
+		case common.ELocation.BlobFS():
 			b.deleteDirEnumerationChan <- object
 			return nil
 		default:
