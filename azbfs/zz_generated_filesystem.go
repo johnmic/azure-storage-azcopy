@@ -119,7 +119,7 @@ func (client filesystemClient) createResponder(resp pipeline.Response) (pipeline
 // period begins when the request is received by the service. If the timeout value elapses before the operation
 // completes, the operation fails. xMsDate is specifies the Coordinated Universal Time (UTC) for the request.  This is
 // required when using shared key authorization.
-func (client filesystemClient) Delete(ctx context.Context, recursive bool, filesystem string, ifModifiedSince *string, ifUnmodifiedSince *string, xMsClientRequestID *string, timeout *int32, xMsDate *string) (*FilesystemDeleteResponse, error) {
+func (client filesystemClient) Delete(ctx context.Context, filesystem string, ifModifiedSince *string, ifUnmodifiedSince *string, xMsClientRequestID *string, timeout *int32, xMsDate *string) (*FilesystemDeleteResponse, error) {
 	if err := validate([]validation{
 		{targetValue: filesystem,
 			constraints: []constraint{{target: "filesystem", name: maxLength, rule: 63, chain: nil},
@@ -133,7 +133,7 @@ func (client filesystemClient) Delete(ctx context.Context, recursive bool, files
 				chain: []constraint{{target: "timeout", name: inclusiveMinimum, rule: 1, chain: nil}}}}}}); err != nil {
 		return nil, err
 	}
-	req, err := client.deletePreparer(recursive, filesystem, ifModifiedSince, ifUnmodifiedSince, xMsClientRequestID, timeout, xMsDate)
+	req, err := client.deletePreparer(filesystem, ifModifiedSince, ifUnmodifiedSince, xMsClientRequestID, timeout, xMsDate)
 	if err != nil {
 		return nil, err
 	}
@@ -145,13 +145,13 @@ func (client filesystemClient) Delete(ctx context.Context, recursive bool, files
 }
 
 // deletePreparer prepares the Delete request.
-func (client filesystemClient) deletePreparer(recursive bool, filesystem string, ifModifiedSince *string, ifUnmodifiedSince *string, xMsClientRequestID *string, timeout *int32, xMsDate *string) (pipeline.Request, error) {
+func (client filesystemClient) deletePreparer(filesystem string, ifModifiedSince *string, ifUnmodifiedSince *string, xMsClientRequestID *string, timeout *int32, xMsDate *string) (pipeline.Request, error) {
 	req, err := pipeline.NewRequest("DELETE", client.url, nil)
 	if err != nil {
 		return req, pipeline.NewError(err, "failed to create request")
 	}
 	params := req.URL.Query()
-	params.Set("recursive", strconv.FormatBool(recursive))
+	params.Set("resource", "filesystem")
 	if timeout != nil {
 		params.Set("timeout", strconv.FormatInt(int64(*timeout), 10))
 	}

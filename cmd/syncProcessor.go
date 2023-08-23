@@ -436,11 +436,21 @@ func (b *remoteResourceDeleter) deleteFolderRecursively(object StoredObject) err
 	case common.ELocation.BlobFS():
 		blobUrlParts := azbfs.NewBfsURLParts(*b.rootURL)
 		blobUrlParts.DirectoryOrFilePath = path.Join(blobUrlParts.DirectoryOrFilePath, object.relativePath)
-		dirUrl := azbfs.NewFileSystemURL(blobUrlParts.URL(), b.p)
-		_, err := dirUrl.Delete(b.ctx)
-		if err != nil {
-			fmt.Printf("Object [%s] Deletion failed with error: %v", object.relativePath, err)
-			return err
+		dirUrl := azbfs.NewDirectoryURL(blobUrlParts.URL(), b.p)
+		marker := ""
+		for {
+			resp, err := dirUrl.Delete(b.ctx, &marker, true)
+			if err != nil {
+				return err
+			}
+
+			// update the continuation token for the next call
+			marker = resp.XMsContinuation()
+
+			// determine whether listing should be done
+			if marker == "" {
+				break
+			}
 		}
 	}
 
