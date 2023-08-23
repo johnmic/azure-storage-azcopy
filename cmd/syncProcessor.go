@@ -439,8 +439,13 @@ func (b *remoteResourceDeleter) deleteFolderRecursively(object StoredObject) err
 		dirUrl := azbfs.NewDirectoryURL(blobUrlParts.URL(), b.p)
 		marker := ""
 		for {
+			// When deleting a directory, the number of paths that are deleted with each invocation is limited.
+			// If the number of paths to be deleted exceeds this limit, a continuation token is returned in this response header.
+			// When a continuation token is returned in the response,
+			// it must be specified in a subsequent invocation of the delete operation to continue deleting the directory.
 			resp, err := dirUrl.Delete(b.ctx, &marker, true)
 			if err != nil {
+				fmt.Printf("Folder [%s] Delete failed with error: %v", object.relativePath, err)
 				return err
 			}
 
