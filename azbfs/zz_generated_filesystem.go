@@ -7,12 +7,13 @@ import (
 	// begin manual edit to generated code
 	"context"
 	"encoding/json"
-	"github.com/Azure/azure-pipeline-go/pipeline"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/Azure/azure-pipeline-go/pipeline"
 	// end manual edit
 )
 
