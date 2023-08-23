@@ -130,13 +130,13 @@ func (d DirectoryURL) FileSystemURL() FileSystemURL {
 // list all files/directories inside the directory. Use an empty Marker to start enumeration from the beginning.
 // After getting a segment, process it, and then call ListDirectorySegment again (passing the the previously-returned
 // Marker) to get the next segment.
-func (d DirectoryURL) ListDirectorySegment(ctx context.Context, marker *string, recursive bool) (*DirectoryListResponse, error) {
+func (d DirectoryURL) ListDirectorySegment(ctx context.Context, marker Marker, recursive bool) (*DirectoryListResponse, error) {
 	// Since listPath is supported on filesystem Url
 	// convert the directory url to fileSystemUrl
 	// and listPath for filesystem with directory path set in the path parameter
 	var maxEntriesInListOperation = int32(1000)
 
-	resp, err := d.FileSystemURL().fileSystemClient.ListPaths(ctx, recursive, d.filesystem, &d.pathParameter, marker,
+	resp, err := d.FileSystemURL().fileSystemClient.ListPaths(ctx, recursive, d.filesystem, &d.pathParameter, marker.Val,
 		&maxEntriesInListOperation, nil, nil, nil, nil)
 
 	return (*DirectoryListResponse)(resp), err

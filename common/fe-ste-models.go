@@ -1045,6 +1045,11 @@ func FromAzFileMetadataToCommonMetadata(m azfile.Metadata) Metadata {
 	return Metadata(m)
 }
 
+// FromAzBlobMetadataToCommonMetadata converts azblobfs's metadata to common metadata.
+func FromAzBlobFSMetadataToCommonMetadata(m azbfs.Metadata) Metadata {
+	return Metadata(m)
+}
+
 // Marshal marshals metadata to string.
 func (m Metadata) Marshal() (string, error) {
 	b, err := json.Marshal(m)

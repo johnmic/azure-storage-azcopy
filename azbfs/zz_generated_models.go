@@ -48,6 +48,19 @@ func PossiblePathGetPropertiesActionTypeValues() []PathGetPropertiesActionType {
 	return []PathGetPropertiesActionType{PathGetPropertiesActionGetAccessControl, PathGetPropertiesActionGetStatus, PathGetPropertiesActionNone}
 }
 
+// Marker represents an opaque value used in paged responses.
+type Marker struct {
+	Val *string
+}
+
+// NotDone returns true if the list enumeration should be started or is not yet complete. Specifically, NotDone returns true
+// for a just-initialized (zero value) Marker indicating that you should make an initial request to get a result portion from
+// the service. NotDone also returns true whenever the service returns an interim result portion. NotDone returns false only
+// after the service has returned the final result portion.
+func (m Marker) NotDone() bool {
+	return m.Val == nil || *m.Val != ""
+}
+
 // PathLeaseActionType enumerates the values for path lease action type.
 type PathLeaseActionType string
 
@@ -513,6 +526,11 @@ func (pdr PathDeleteResponse) XMsVersion() string {
 // PathGetPropertiesResponse ...
 type PathGetPropertiesResponse struct {
 	rawResponse *http.Response
+}
+
+// NewMetadata returns user-defined key/value pairs.
+func (bgpr PathGetPropertiesResponse) NewMetadata() (Metadata, error) {
+	return NewMetadata(bgpr.XMsProperties())
 }
 
 // Response returns the raw HTTP response object.
