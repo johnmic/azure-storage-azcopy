@@ -67,7 +67,7 @@ func (s FileSystemURL) Create(ctx context.Context) (*FilesystemCreateResponse, e
 // Delete marks the specified file system for deletion.
 // The file system and any files contained within it are later deleted during garbage collection.
 func (s FileSystemURL) Delete(ctx context.Context) (*FilesystemDeleteResponse, error) {
-	return s.fileSystemClient.Delete(ctx, true, s.name, nil, nil, nil, nil, nil)
+	return s.fileSystemClient.Delete(ctx, s.name, nil, nil, nil, nil, nil)
 }
 
 // GetProperties returns all user-defined metadata and system properties for the specified file system or file system snapshot.
