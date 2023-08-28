@@ -107,7 +107,7 @@ func (t *BlobFSAccountTraverser) Traverse(preprocessor objectMorpher, processor 
 
 	for _, v := range fsList {
 		fileSystemURL := t.accountURL.NewFileSystemURL(v).URL()
-		fileSystemTraverser := newBlobFSTraverser(&fileSystemURL, t.p, t.ctx, true, t.incrementEnumerationCounter, false, false, nil, nil, nil, 0, time.Time{}, common.CFDModeFlags.NotDefined(), false, nil)
+		fileSystemTraverser := newBlobFSTraverser(&fileSystemURL, t.p, t.ctx, true, t.incrementEnumerationCounter, false, false, nil, nil, nil, nil, 0, time.Time{}, common.CFDModeFlags.NotDefined(), false, nil)
 
 		preprocessorForThisChild := preprocessor.FollowedBy(newContainerDecorator(v))
 
