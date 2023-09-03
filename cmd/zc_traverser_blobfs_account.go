@@ -24,10 +24,12 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"time"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 
 	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
+	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
 )
 
 // We don't allow S2S from BlobFS, but what this gives us is the ability for users to download entire accounts at once.
@@ -105,7 +107,7 @@ func (t *BlobFSAccountTraverser) Traverse(preprocessor objectMorpher, processor 
 
 	for _, v := range fsList {
 		fileSystemURL := t.accountURL.NewFileSystemURL(v).URL()
-		fileSystemTraverser := newBlobFSTraverser(&fileSystemURL, t.p, t.ctx, true, t.incrementEnumerationCounter)
+		fileSystemTraverser := newBlobFSTraverser(&fileSystemURL, t.p, t.ctx, true, t.incrementEnumerationCounter, false, false, nil, nil, nil, nil, 0, time.Time{}, common.CFDModeFlags.NotDefined(), false, nil)
 
 		preprocessorForThisChild := preprocessor.FollowedBy(newContainerDecorator(v))
 

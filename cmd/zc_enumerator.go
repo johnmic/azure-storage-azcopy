@@ -507,7 +507,7 @@ func InitResourceTraverser(resource common.ResourceString, location common.Locat
 
 			output = newBlobFSAccountTraverser(resourceURL, *p, *ctx, incrementEnumerationCounter)
 		} else {
-			output = newBlobFSTraverser(resourceURL, *p, *ctx, recursive, incrementEnumerationCounter)
+			output = newBlobFSTraverser(resourceURL, *p, *ctx, recursive, incrementEnumerationCounter, isSync, isSource, errorChannel, indexerMap, possiblyRenamedMap, orderedTqueue, maxObjectIndexerSizeInGB, lastSyncTime, cfdMode, metaDataOnlySync, scannerLogger)
 		}
 	case common.ELocation.S3():
 		resourceURL, err := resource.FullURL()

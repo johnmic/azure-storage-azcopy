@@ -33,6 +33,7 @@ import (
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 	"github.com/Azure/azure-storage-blob-go/azblob"
+	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
 	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
 	"github.com/aymanjarrousms/azure-storage-azcopy/v10/ste"
 	"github.com/aymanjarrousms/azure-storage-file-go/azfile"
@@ -432,6 +433,30 @@ func (b *remoteResourceDeleter) deleteFolderRecursively(object StoredObject) err
 			fmt.Printf("Object [%s] Deletion failed with error: %v", object.relativePath, err)
 			return err
 		}
+	case common.ELocation.BlobFS():
+		blobUrlParts := azbfs.NewBfsURLParts(*b.rootURL)
+		blobUrlParts.DirectoryOrFilePath = path.Join(blobUrlParts.DirectoryOrFilePath, object.relativePath)
+		dirUrl := azbfs.NewDirectoryURL(blobUrlParts.URL(), b.p)
+		marker := ""
+		for {
+			// When deleting a directory, the number of paths that are deleted with each invocation is limited.
+			// If the number of paths to be deleted exceeds this limit, a continuation token is returned in this response header.
+			// When a continuation token is returned in the response,
+			// it must be specified in a subsequent invocation of the delete operation to continue deleting the directory.
+			resp, err := dirUrl.Delete(b.ctx, &marker, true)
+			if err != nil {
+				fmt.Printf("Folder [%s] Delete failed with error: %v", object.relativePath, err)
+				return err
+			}
+
+			// update the continuation token for the next call
+			marker = resp.XMsContinuation()
+
+			// determine whether listing should be done
+			if marker == "" {
+				break
+			}
+		}
 	}
 
 	return nil
@@ -476,6 +501,11 @@ func (b *remoteResourceDeleter) delete(object StoredObject) error {
 					}
 				}
 			}
+		case common.ELocation.BlobFS():
+			fileURLParts := azbfs.NewBfsURLParts(*b.rootURL)
+			fileURLParts.DirectoryOrFilePath = path.Join(fileURLParts.DirectoryOrFilePath, object.relativePath)
+			fileURL := azbfs.NewFileURL(fileURLParts.URL(), b.p)
+			_, err = fileURL.Delete(b.ctx)
 		default:
 			panic("not implemented, check your code")
 		}
@@ -528,6 +558,9 @@ func (b *remoteResourceDeleter) delete(object StoredObject) error {
 			return nil
 
 		case common.ELocation.File():
+			b.deleteDirEnumerationChan <- object
+			return nil
+		case common.ELocation.BlobFS():
 			b.deleteDirEnumerationChan <- object
 			return nil
 		default:

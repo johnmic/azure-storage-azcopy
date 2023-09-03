@@ -313,7 +313,8 @@ func removeSingleBfsResource(ctx context.Context, urlParts azbfs.BfsURLParts, p 
 		return "Successfully removed directory: " + urlParts.DirectoryOrFilePath, nil
 	} else {
 		for {
-			listResp, err := directoryURL.ListDirectorySegment(ctx, &marker, recursive)
+			marker := azbfs.Marker{}
+			listResp, err := directoryURL.ListDirectorySegment(ctx, marker, recursive)
 
 			if err != nil {
 				return "Could not list files", err
@@ -330,8 +331,9 @@ func removeSingleBfsResource(ctx context.Context, urlParts azbfs.BfsURLParts, p 
 				})
 			}
 
-			marker = listResp.XMsContinuation()
-			if marker == "" { // do-while pattern
+			continuationMarker := listResp.XMsContinuation()
+			marker = azbfs.Marker{Val: &continuationMarker}
+			if !marker.NotDone() { // do-while pattern
 				break
 			}
 		}

@@ -24,9 +24,11 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
+	"github.com/Azure/azure-storage-blob-go/azblob"
 
 	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
 	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
@@ -34,6 +36,7 @@ import (
 
 type blobFSSenderBase struct {
 	jptm                IJobPartTransferMgr
+	sip                 ISourceInfoProvider
 	fileOrDirURL        URLHolder
 	chunkSize           int64
 	numChunks           uint32
@@ -72,6 +75,7 @@ func newBlobFSSenderBase(jptm IJobPartTransferMgr, destination string, p pipelin
 	return &blobFSSenderBase{
 		jptm:                jptm,
 		fileOrDirURL:        h,
+		sip:                 sip,
 		chunkSize:           chunkSize,
 		numChunks:           numChunks,
 		pipeline:            p,
@@ -215,7 +219,7 @@ func (u *blobFSSenderBase) doEnsureDirExists(d azbfs.DirectoryURL) error {
 
 func (u *blobFSSenderBase) SetFolderProperties() error {
 	// we don't currently preserve any properties for BlobFS folders
-	return nil
+	return u.SetPOSIXProperties()
 }
 
 func (u *blobFSSenderBase) DirUrlToString() string {
@@ -225,4 +229,41 @@ func (u *blobFSSenderBase) DirUrlToString() string {
 	// To avoid SAS token
 	dirUrl.RawQuery = ""
 	return dirUrl.String()
+}
+
+func (u *blobFSSenderBase) GetBlobURL() azblob.BlobURL {
+	blobPipeline := u.jptm.(*jobPartTransferMgr).jobPartMgr.(*jobPartMgr).secondaryPipeline // pull the secondary (blob) pipeline
+	bURLParts := azblob.NewBlobURLParts(u.fileOrDirURL.URL())
+	bURLParts.Host = strings.ReplaceAll(bURLParts.Host, ".dfs", ".blob") // switch back to blob
+
+	return azblob.NewBlobURL(bURLParts.URL(), blobPipeline)
+}
+
+func (u *blobFSSenderBase) GetSourcePOSIXProperties() (common.UnixStatAdapter, error) {
+	if unixSIP, ok := u.sip.(IUNIXPropertyBearingSourceInfoProvider); ok {
+		statAdapter, err := unixSIP.GetUNIXProperties()
+		if err != nil {
+			return nil, err
+		}
+
+		return statAdapter, nil
+	} else {
+		return nil, nil // no properties present!
+	}
+}
+
+func (u *blobFSSenderBase) SetPOSIXProperties() error {
+	adapter, err := u.GetSourcePOSIXProperties()
+	if err != nil {
+		return fmt.Errorf("failed to get POSIX properties")
+	} else if adapter == nil {
+		return nil
+	}
+
+	meta := azblob.Metadata{}
+	common.AddStatToBlobMetadata(adapter, meta)
+	delete(meta, common.POSIXFolderMeta) // Can't be set on HNS accounts.
+
+	_, err = u.GetBlobURL().SetMetadata(u.jptm.Context(), meta, azblob.BlobAccessConditions{}, azblob.ClientProvidedKeyOptions{})
+	return err
 }

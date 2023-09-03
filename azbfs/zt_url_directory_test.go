@@ -269,8 +269,8 @@ func (dus *DirectoryUrlSuite) TestDirectoryStructure(c *chk.C) {
 	// expected number of file inside the dir is 2 i.e one
 	// inside the dir itself and one inside the sub-dir
 	// expected number of sub-dir inside the dir is 1
-	continuationMarker := ""
-	lresp, err := dirUrl.ListDirectorySegment(context.Background(), &continuationMarker, true)
+	marker := azbfs.Marker{}
+	lresp, err := dirUrl.ListDirectorySegment(context.Background(), marker, true)
 
 	c.Assert(err, chk.IsNil)
 	c.Assert(lresp.Response().StatusCode, chk.Equals, http.StatusOK)
@@ -301,8 +301,8 @@ func (dus *DirectoryUrlSuite) TestListDirectoryWithSpaces(c *chk.C) {
 
 	// list the directory created above.
 	// expected number of files inside the dir is 1
-	continuationMarker := ""
-	lresp, err := dirUrl.ListDirectorySegment(context.Background(), &continuationMarker, true)
+	marker := azbfs.Marker{}
+	lresp, err := dirUrl.ListDirectorySegment(context.Background(), marker, true)
 	c.Assert(err, chk.IsNil)
 	c.Assert(lresp.Response().StatusCode, chk.Equals, http.StatusOK)
 	c.Assert(len(lresp.Files()), chk.Equals, 1)
