@@ -445,6 +445,7 @@ func (tft TestFromTo) getValues(op Operation) []common.FromTo {
 					common.EFromTo.FileLocal(),
 					common.EFromTo.BlobFile(),
 					common.EFromTo.FileBlob(),
+					common.EFromTo.LocalBlobFS(),
 					common.FromTo(ETestFromTo.SMBMountFile()):
 					// do nothing, these are fine
 				default:
@@ -455,7 +456,7 @@ func (tft TestFromTo) getValues(op Operation) []common.FromTo {
 			// TODO: remove this temp block
 			// temp
 			if fromTo.From() == common.ELocation.S3() ||
-				fromTo.From() == common.ELocation.BlobFS() || fromTo.To() == common.ELocation.BlobFS() {
+				fromTo.From() == common.ELocation.BlobFS() {
 				continue // until we implement the declarativeResourceManagers
 			}
 

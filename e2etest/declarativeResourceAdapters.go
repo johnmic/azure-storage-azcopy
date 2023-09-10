@@ -22,6 +22,7 @@ package e2etest
 
 import (
 	"github.com/Azure/azure-storage-blob-go/azblob"
+	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
 	"github.com/aymanjarrousms/azure-storage-azcopy/v10/sddl"
 	"github.com/aymanjarrousms/azure-storage-file-go/azfile"
 )
@@ -70,6 +71,43 @@ func (a blobResourceAdapter) toBlobTags() azblob.BlobTagsMap {
 		return azblob.BlobTagsMap{}
 	}
 	return azblob.BlobTagsMap(a.obj.creationProperties.blobTags)
+}
+
+////
+
+type blobFSResourceAdapter struct {
+	obj *testObject
+}
+
+func (a blobFSResourceAdapter) toHeaders() azbfs.BlobFSHTTPHeaders {
+	props := a.obj.creationProperties.contentHeaders
+	if props == nil {
+		return azbfs.BlobFSHTTPHeaders{}
+	}
+	return azbfs.BlobFSHTTPHeaders{
+		ContentType:        sval(props.contentType),
+		ContentEncoding:    sval(props.contentEncoding),
+		ContentLanguage:    sval(props.contentLanguage),
+		ContentDisposition: sval(props.contentDisposition),
+		CacheControl:       sval(props.cacheControl),
+	}
+}
+
+func (a blobFSResourceAdapter) toMetadata() map[string]string {
+	if a.obj.creationProperties.nameValueMetadata == nil {
+		return map[string]string{}
+	}
+	return a.obj.creationProperties.nameValueMetadata
+}
+
+func (a blobFSResourceAdapter) toACL() azbfs.BlobFSAccessControl {
+	if a.obj.creationProperties.adlsPermissionsACL == nil {
+		return azbfs.BlobFSAccessControl{}
+	}
+
+	return azbfs.BlobFSAccessControl{
+		ACL: *a.obj.creationProperties.adlsPermissionsACL,
+	}
 }
 
 ////

@@ -667,6 +667,94 @@ func (scenarioHelper) generateCommonRemoteScenarioForS3(c asserter, client *mini
 	return
 }
 
+type generateBlobFSFromListOptions struct {
+	rawSASURL    url.URL
+	containerURL azbfs.FileSystemURL
+	generateFromListOptions
+}
+
+func (s scenarioHelper) generateBlobFSFromList(c asserter, options *generateBlobFSFromListOptions) {
+	for _, b := range options.fs {
+		ad := blobFSResourceAdapter{b}
+
+		if b.isFolder() {
+			s.createBFSDirectory(b, ad, c, options)
+			continue
+		}
+
+		s.createBFSFile(b, ad, c, options)
+	}
+
+	// sleep a bit so that the files' lmts are guaranteed to be in the past
+	// TODO: can we make it so that this sleeping only happens when we really need it to?
+	time.Sleep(time.Millisecond * 1050)
+}
+
+func (s scenarioHelper) createBFSDirectory(obj *testObject, ad blobFSResourceAdapter, c asserter, options *generateBlobFSFromListOptions) {
+	var response *azbfs.DirectoryCreateResponse
+	var err error
+
+	directoryUrl := options.containerURL.NewRootDirectoryURL().NewDirectoryURL(obj.name)
+
+	response, err = directoryUrl.CreateWithOptions(
+		context.TODO(),
+		azbfs.CreateDirectoryOptions{
+			RecreateIfExists: false,
+			Metadata:         ad.toMetadata(),
+		})
+
+	c.AssertNoErr(err)
+	c.Assert(response.StatusCode(), equals(), 201)
+
+	if obj.creationProperties.adlsPermissionsACL != nil {
+		updateResponse, err := directoryUrl.SetAccessControl(ctx, azbfs.BlobFSAccessControl{
+			ACL: *obj.creationProperties.adlsPermissionsACL,
+		})
+
+		c.AssertNoErr(err)
+		c.Assert(updateResponse.StatusCode(), equals(), 200)
+	}
+}
+
+func (scenarioHelper) createBFSFile(obj *testObject, ad blobFSResourceAdapter, c asserter, options *generateBlobFSFromListOptions) {
+	if ad.obj.creationProperties.contentHeaders == nil {
+		obj.creationProperties.contentHeaders = &contentHeaders{}
+	}
+
+	headers := ad.toHeaders()
+	dir, file := path.Split(obj.name)
+	fileUrl := options.containerURL.NewDirectoryURL(dir).NewFileURL(file)
+
+	response, err := fileUrl.CreateWithOptions(
+		ctx,
+		azbfs.CreateFileOptions{
+			Headers:  headers,
+			Metadata: ad.toMetadata(),
+		},
+		ad.toACL(),
+	)
+
+	c.AssertNoErr(err)
+	c.Assert(response.StatusCode(), equals(), 201)
+
+	// sleep a bit so that the files' lmts are guaranteed to be in the past
+	time.Sleep(time.Millisecond * 1050)
+}
+
+func (s scenarioHelper) downloadBlobFSContent(a asserter, options downloadContentOptions) []byte {
+	dir, file := path.Split(options.resourceRelPath)
+	fileUrl := options.fileSystemUrl.NewDirectoryURL(dir).NewFileURL(file)
+	downloadResp, err := fileUrl.Download(ctx, 0, azbfs.CountToEnd)
+	a.AssertNoErr(err)
+
+	retryReader := downloadResp.Body(azbfs.RetryReaderOptions{})
+	defer retryReader.Close()
+
+	destData, err := ioutil.ReadAll(retryReader)
+	a.AssertNoErr(err)
+	return destData[:]
+}
+
 type generateAzureFilesFromListOptions struct {
 	shareURL    azfile.ShareURL
 	fileList    []*testObject

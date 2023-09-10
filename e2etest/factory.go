@@ -124,7 +124,32 @@ func (TestResourceFactory) GetContainerURLWithSAS(c asserter, accountType Accoun
 	return azblob.NewContainerURL(*fullURL, azblob.NewPipeline(azblob.NewAnonymousCredential(), azblob.PipelineOptions{}))
 }
 
-func (TestResourceFactory) GetFileShareULWithSAS(c asserter, accountType AccountType, containerName string) azfile.ShareURL {
+func (TestResourceFactory) GetFileSystemURLWithSAS(c asserter, accountType AccountType, containerName string) azbfs.FileSystemURL {
+	accountName, accountKey := GlobalInputManager{}.GetAccountAndKey(accountType)
+	credential := azbfs.NewSharedKeyCredential(accountName, accountKey)
+
+	sasQueryParams, err := azbfs.AccountSASSignatureValues{
+		Protocol:      azbfs.SASProtocolHTTPS,
+		ExpiryTime:    time.Now().UTC().Add(48 * time.Hour),
+		Permissions:   azbfs.AccountSASPermissions{Read: true, Add: true, Write: true, Create: true, Delete: true, List: true, Update: true, Process: true}.String(),
+		ResourceTypes: azbfs.AccountSASResourceTypes{Service: true, Container: true, Object: true}.String(),
+		Services:      azbfs.AccountSASServices{Blob: true}.String(),
+	}.NewSASQueryParameters(credential)
+	c.AssertNoErr(err)
+
+	// construct the url from scratch
+	qp := sasQueryParams.Encode()
+	rawURL := fmt.Sprintf("https://%s.dfs.core.windows.net/%s?%s",
+		credential.AccountName(), containerName, qp)
+
+	// convert the raw url and validate it was parsed successfully
+	fullURL, err := url.Parse(rawURL)
+	c.AssertNoErr(err)
+
+	return azbfs.NewFileSystemURL(*fullURL, azbfs.NewPipeline(azbfs.NewAnonymousCredential(), azbfs.PipelineOptions{}))
+}
+
+func (TestResourceFactory) GetFileShareURLWithSAS(c asserter, accountType AccountType, containerName string) azfile.ShareURL {
 	accountName, accountKey := GlobalInputManager{}.GetAccountAndKey(accountType)
 	credential, err := azfile.NewSharedKeyCredential(accountName, accountKey)
 	c.AssertNoErr(err)
@@ -165,6 +190,16 @@ func (TestResourceFactory) CreateNewContainer(c asserter, publicAccess azblob.Pu
 	return container, name, TestResourceFactory{}.GetContainerURLWithSAS(c, accountType, name).URL()
 }
 
+func (TestResourceFactory) CreateNewFileSystem(c asserter, accountType AccountType) (fileSystem azbfs.FileSystemURL, name string, rawUrl url.URL) {
+	name = TestResourceNameGenerator{}.GenerateContainerName(c)
+	fileSystem = TestResourceFactory{}.GetDatalakeServiceURL(accountType).NewFileSystemURL(name)
+
+	cResp, err := fileSystem.Create(context.Background())
+	c.AssertNoErr(err)
+	c.Assert(cResp.StatusCode(), equals(), 201)
+	return fileSystem, name, TestResourceFactory{}.GetFileSystemURLWithSAS(c, accountType, name).URL()
+}
+
 const defaultShareQuotaGB = 512
 
 func (TestResourceFactory) CreateNewFileShare(c asserter, accountType AccountType) (fileShare azfile.ShareURL, name string, rawSasURL url.URL) {
@@ -174,7 +209,7 @@ func (TestResourceFactory) CreateNewFileShare(c asserter, accountType AccountTyp
 	cResp, err := fileShare.Create(context.Background(), nil, defaultShareQuotaGB)
 	c.AssertNoErr(err)
 	c.Assert(cResp.StatusCode(), equals(), 201)
-	return fileShare, name, TestResourceFactory{}.GetFileShareULWithSAS(c, accountType, name).URL()
+	return fileShare, name, TestResourceFactory{}.GetFileShareURLWithSAS(c, accountType, name).URL()
 }
 
 func (TestResourceFactory) CreateNewFileShareSnapshot(c asserter, fileShare azfile.ShareURL) (snapshotID string) {

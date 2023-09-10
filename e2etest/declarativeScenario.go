@@ -156,8 +156,11 @@ func (s *scenario) assignSourceAndDest() {
 				return &resourceBlobContainer{accountType: s.destAccountType}
 			}
 		case common.ELocation.BlobFS():
-			s.a.Error("Not implementd yet for blob FS")
-			return &resourceDummy{}
+			if isSourceAcc {
+				return &resourceBlobFSContainer{accountType: s.srcAccountType}
+			} else {
+				return &resourceBlobFSContainer{accountType: s.destAccountType}
+			}
 		case common.ELocation.S3():
 			s.a.Error("Not implementd yet for S3")
 			return &resourceDummy{}

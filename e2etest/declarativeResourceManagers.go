@@ -28,6 +28,7 @@ import (
 	"strings"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
+	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
 	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
 	"github.com/aymanjarrousms/azure-storage-file-go/azfile"
 )
@@ -42,6 +43,7 @@ type downloadContentOptions struct {
 	resourceRelPath string
 	downloadBlobContentOptions
 	downloadFileContentOptions
+	downloadBlobFSContentOptions
 }
 
 // nolint
@@ -49,6 +51,10 @@ type downloadBlobContentOptions struct {
 	containerURL azblob.ContainerURL
 	cpkInfo      common.CpkInfo
 	cpkScopeInfo common.CpkScopeInfo
+}
+
+type downloadBlobFSContentOptions struct {
+	fileSystemUrl azbfs.FileSystemURL
 }
 
 type downloadFileContentOptions struct {
@@ -309,6 +315,100 @@ func (r *resourceBlobContainer) downloadContent(a asserter, options downloadCont
 }
 
 func (r *resourceBlobContainer) createSourceSnapshot(a asserter) {
+	panic("Not Implemented")
+}
+
+// ///
+
+type resourceBlobFSContainer struct {
+	accountType   AccountType
+	fileSystemURL *azbfs.FileSystemURL
+	rawSasURL     *url.URL
+}
+
+func (r *resourceBlobFSContainer) createLocation(a asserter, s *scenario) {
+	fsu, _, rawSasURL := TestResourceFactory{}.CreateNewFileSystem(a, r.accountType)
+	r.fileSystemURL = &fsu
+	r.rawSasURL = &rawSasURL
+	if s.GetModifiableParameters().relativeSourcePath != "" {
+		r.appendSourcePath(s.GetModifiableParameters().relativeSourcePath, true)
+	}
+}
+
+func (r *resourceBlobFSContainer) createFiles(a asserter, s *scenario, isSource bool) {
+	options := &generateBlobFSFromListOptions{
+		rawSASURL:    *r.rawSasURL,
+		containerURL: *r.fileSystemURL,
+		generateFromListOptions: generateFromListOptions{
+			fs:          s.fs.allObjects(isSource),
+			defaultSize: s.fs.defaultSize,
+			accountType: s.srcAccountType,
+		},
+	}
+	scenarioHelper{}.generateBlobFSFromList(a, options)
+}
+
+func (r *resourceBlobFSContainer) createFile(a asserter, o *testObject, s *scenario, isSource bool) {
+	options := &generateBlobFSFromListOptions{
+		containerURL: *r.fileSystemURL,
+		generateFromListOptions: generateFromListOptions{
+			fs:          []*testObject{o},
+			defaultSize: s.fs.defaultSize,
+		},
+	}
+
+	scenarioHelper{}.generateBlobFSFromList(a, options)
+}
+
+func (r *resourceBlobFSContainer) cleanup(a asserter) {
+	if r.fileSystemURL != nil {
+		deleteFilesystem(a, *r.fileSystemURL)
+	}
+}
+
+func (r *resourceBlobFSContainer) getParam(stripTopDir bool, withSas bool, withFile string) string {
+	var uri url.URL
+	if withSas {
+		uri = *r.rawSasURL
+	} else {
+		uri = r.fileSystemURL.URL()
+	}
+
+	if withFile != "" {
+		bfsURLParts := azbfs.NewBfsURLParts(uri)
+
+		bfsURLParts.DirectoryOrFilePath = withFile
+
+		uri = bfsURLParts.URL()
+	}
+
+	return uri.String()
+}
+
+func (r *resourceBlobFSContainer) getSAS() string {
+	return "?" + r.rawSasURL.RawQuery
+}
+
+func (r *resourceBlobFSContainer) isContainerLike() bool {
+	return true
+}
+
+func (r *resourceBlobFSContainer) appendSourcePath(filePath string, useSas bool) {
+	if useSas {
+		r.rawSasURL.Path += "/" + filePath
+	}
+}
+
+func (r *resourceBlobFSContainer) getAllProperties(a asserter) map[string]*objectProperties {
+	panic("Not Implemented")
+}
+
+func (r *resourceBlobFSContainer) downloadContent(a asserter, options downloadContentOptions) []byte {
+	options.fileSystemUrl = *r.fileSystemURL
+	return scenarioHelper{}.downloadBlobFSContent(a, options)
+}
+
+func (r *resourceBlobFSContainer) createSourceSnapshot(a asserter) {
 	panic("Not Implemented")
 }
 
