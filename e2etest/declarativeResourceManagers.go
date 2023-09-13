@@ -400,7 +400,7 @@ func (r *resourceBlobFSContainer) appendSourcePath(filePath string, useSas bool)
 }
 
 func (r *resourceBlobFSContainer) getAllProperties(a asserter) map[string]*objectProperties {
-	panic("Not Implemented")
+	return scenarioHelper{}.enumerateContainerBlobFSProperties(a, *r.fileSystemURL)
 }
 
 func (r *resourceBlobFSContainer) downloadContent(a asserter, options downloadContentOptions) []byte {

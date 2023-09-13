@@ -169,6 +169,7 @@ func (TestFromToEx) AllPairs() TestFromTo {
 			common.Location(ETestLocation.SMBMount()),
 		},
 		tos: []common.Location{
+			common.ELocation.BlobFS(),
 			common.ELocation.Blob(),
 			common.ELocation.File(),
 		},
@@ -196,6 +197,7 @@ func (TestFromToEx) AllSync() TestFromTo {
 		tos: []common.Location{
 			common.ELocation.Blob(),
 			common.ELocation.File(),
+			common.ELocation.BlobFS(),
 		},
 	}
 }

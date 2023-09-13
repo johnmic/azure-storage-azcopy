@@ -44,6 +44,7 @@ type blobFSSenderBase struct {
 	pacer               pacer
 	creationTimeHeaders *azbfs.BlobFSHTTPHeaders
 	flushThreshold      int64
+	metadataToApply     azblob.Metadata
 }
 
 func newBlobFSSenderBase(jptm IJobPartTransferMgr, destination string, p pipeline.Pipeline, pacer pacer, sip ISourceInfoProvider) (*blobFSSenderBase, error) {
@@ -82,6 +83,7 @@ func newBlobFSSenderBase(jptm IJobPartTransferMgr, destination string, p pipelin
 		pacer:               pacer,
 		creationTimeHeaders: &headers,
 		flushThreshold:      chunkSize * int64(ADLSFlushThreshold),
+		metadataToApply:     props.SrcMetadata.ToAzBlobMetadata(),
 	}, nil
 }
 
@@ -159,7 +161,11 @@ func (u *blobFSSenderBase) Prologue(state common.PrologueState) (destinationModi
 	}
 
 	// Create file with the source size
-	_, err = u.fileURL().Create(u.jptm.Context(), *u.creationTimeHeaders, azbfs.BlobFSAccessControl{}) // "create" actually calls "create path", so if we didn't need to track folder creation, we could just let this call create the folder as needed
+	meta := common.Metadata(u.metadataToApply).Clone().ToAzBlobMetadata()
+	options := azbfs.CreateFileOptions{
+		Headers:  *u.creationTimeHeaders,
+		Metadata: meta}
+	_, err = u.fileURL().CreateWithOptions(u.jptm.Context(), options, azbfs.BlobFSAccessControl{}) // "create" actually calls "create path", so if we didn't need to track folder creation, we could just let this call create the folder as needed
 	if err != nil {
 		u.jptm.FailActiveUpload("Creating file", err)
 		return
@@ -253,17 +259,19 @@ func (u *blobFSSenderBase) GetSourcePOSIXProperties() (common.UnixStatAdapter, e
 }
 
 func (u *blobFSSenderBase) SetPOSIXProperties() error {
-	adapter, err := u.GetSourcePOSIXProperties()
-	if err != nil {
-		return fmt.Errorf("failed to get POSIX properties")
-	} else if adapter == nil {
-		return nil
+	meta := common.Metadata(u.metadataToApply).Clone().ToAzBlobMetadata()
+	if u.jptm.Info().PreservePOSIXProperties {
+		adapter, err := u.GetSourcePOSIXProperties()
+		if err != nil {
+			return fmt.Errorf("failed to get POSIX properties")
+		} else if adapter == nil {
+			return nil
+		}
+
+		common.AddStatToBlobMetadata(adapter, meta)
+		delete(meta, common.POSIXFolderMeta) // Can't be set on HNS accounts.
 	}
 
-	meta := azblob.Metadata{}
-	common.AddStatToBlobMetadata(adapter, meta)
-	delete(meta, common.POSIXFolderMeta) // Can't be set on HNS accounts.
-
-	_, err = u.GetBlobURL().SetMetadata(u.jptm.Context(), meta, azblob.BlobAccessConditions{}, azblob.ClientProvidedKeyOptions{})
+	_, err := u.GetBlobURL().SetMetadata(u.jptm.Context(), meta, azblob.BlobAccessConditions{}, azblob.ClientProvidedKeyOptions{})
 	return err
 }

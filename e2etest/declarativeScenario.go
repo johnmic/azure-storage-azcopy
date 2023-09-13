@@ -159,7 +159,7 @@ func (s *scenario) assignSourceAndDest() {
 			if isSourceAcc {
 				return &resourceBlobFSContainer{accountType: s.srcAccountType}
 			} else {
-				return &resourceBlobFSContainer{accountType: s.destAccountType}
+				return &resourceBlobFSContainer{accountType: EAccountType.HierarchicalNamespaceEnabled()} /* Workaround to avoid duplciating the tests */
 			}
 		case common.ELocation.S3():
 			s.a.Error("Not implementd yet for S3")
