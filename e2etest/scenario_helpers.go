@@ -984,6 +984,109 @@ func (s scenarioHelper) enumerateShareFileProperties(a asserter, shareURL azfile
 	return result
 }
 
+func (s scenarioHelper) enumerateContainerBlobFSProperties(a asserter, FileSystemURL azbfs.FileSystemURL) map[string]*objectProperties {
+	var dirQ []azbfs.DirectoryURL
+	result := make(map[string]*objectProperties)
+
+	root := FileSystemURL.NewRootDirectoryURL()
+	dirQ = append(dirQ, root)
+	for i := 0; i < len(dirQ); i++ {
+		currentDirURL := dirQ[i]
+		for marker := (azbfs.Marker{}); marker.NotDone(); {
+			lResp, err := currentDirURL.ListDirectorySegment(context.TODO(), marker, false)
+			a.AssertNoErr(err)
+
+			// Process the files and folders we listed
+			for _, fileInfo := range lResp.Files() {
+				fileName := path.Base(*fileInfo.Name)
+				fileURL := currentDirURL.NewFileURL(fileName)
+				fProps, err := fileURL.GetProperties(context.TODO())
+				a.AssertNoErr(err)
+
+				cacheControl := fProps.CacheControl()
+				contentDisposition := fProps.ContentDisposition()
+				contentEncoding := fProps.ContentEncoding()
+				contentLanguage := fProps.ContentLanguage()
+				contentType := fProps.ContentType()
+				contentMD5 := fProps.ContentMD5()
+				h := contentHeaders{
+					cacheControl:       &cacheControl,
+					contentDisposition: &contentDisposition,
+					contentEncoding:    &contentEncoding,
+					contentLanguage:    &contentLanguage,
+					contentType:        &contentType,
+					contentMD5:         contentMD5,
+				}
+
+				metadata, err := fProps.NewMetadata()
+				extendedProp, _ := common.ReadStatFromBlobFSMetadata(metadata, fProps.ContentLength())
+
+				// Construct the properties object
+				fileSize := fProps.ContentLength()
+				creationTime := extendedProp.CTime()
+				lastWriteTime := extendedProp.MTime()
+
+				props := objectProperties{
+					isFolder:          false,
+					size:              &fileSize,
+					contentHeaders:    &h,
+					nameValueMetadata: metadata,
+					creationTime:      &creationTime,
+					lastWriteTime:     &lastWriteTime,
+				}
+
+				result[*fileInfo.Name] = &props
+			}
+
+			for _, dirInfo := range lResp.Directories() {
+				dirURL := currentDirURL.NewDirectoryURL(dirInfo)
+				dProps, err := dirURL.GetProperties(context.TODO())
+				a.AssertNoErr(err)
+
+				cacheControl := dProps.CacheControl()
+				contentDisposition := dProps.ContentDisposition()
+				contentEncoding := dProps.ContentEncoding()
+				contentLanguage := dProps.ContentLanguage()
+				contentType := dProps.ContentType()
+				contentMD5 := dProps.ContentMD5()
+				h := contentHeaders{
+					cacheControl:       &cacheControl,
+					contentDisposition: &contentDisposition,
+					contentEncoding:    &contentEncoding,
+					contentLanguage:    &contentLanguage,
+					contentType:        &contentType,
+					contentMD5:         contentMD5,
+				}
+
+				metadata, err := dProps.NewMetadata()
+				extendedProp, _ := common.ReadStatFromBlobFSMetadata(metadata, dProps.ContentLength())
+
+				// Construct the properties object
+				fileSize := dProps.ContentLength()
+				creationTime := extendedProp.CTime()
+				lastWriteTime := extendedProp.MTime()
+
+				props := objectProperties{
+					isFolder:          true,
+					size:              &fileSize,
+					contentHeaders:    &h,
+					nameValueMetadata: metadata,
+					creationTime:      &creationTime,
+					lastWriteTime:     &lastWriteTime,
+				}
+
+				result[dirInfo] = &props
+				dirQ = append(dirQ, dirURL)
+			}
+
+			continuationMarker := lResp.XMsContinuation()
+			marker = azbfs.Marker{Val: &continuationMarker}
+		}
+	}
+
+	return result
+}
+
 func (s scenarioHelper) downloadFileContent(a asserter, options downloadContentOptions) []byte {
 	fileURL := options.shareURL.NewRootDirectoryURL().NewFileURL(options.resourceRelPath)
 	downloadResp, err := fileURL.Download(ctx, 0, azfile.CountToEnd, false)

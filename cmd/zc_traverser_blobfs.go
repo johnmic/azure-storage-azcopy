@@ -498,7 +498,7 @@ func (t *blobFSTraverser) Traverse(preprocessor objectMorpher, processor objectP
 		//
 		FinalizeAll = true
 		for marker := (azbfs.Marker{}); marker.NotDone(); {
-			lResp, err := currentDirURL.ListDirectorySegment(t.ctx, marker, false /* check if should be true or false*/)
+			lResp, err := currentDirURL.ListDirectorySegment(t.ctx, marker, false)
 			if err != nil {
 				if targetTraverser && err.(azbfs.StorageError).Response().StatusCode == 404 {
 					storedObject := StoredObject{
