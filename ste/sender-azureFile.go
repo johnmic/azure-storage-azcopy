@@ -304,8 +304,7 @@ func (u *azureFileSenderBase) addPermissionsToHeaders(info TransferInfo, destUrl
 			return "Putting permissions", err
 		}
 
-		ePermString := ""
-		u.headersToApply.PermissionString = &ePermString
+		u.headersToApply.PermissionString = nil
 	}
 	return "", nil
 }
