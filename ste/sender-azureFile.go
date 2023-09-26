@@ -304,6 +304,9 @@ func (u *azureFileSenderBase) addPermissionsToHeaders(info TransferInfo, destUrl
 			return "Putting permissions", err
 		}
 
+		// The AzFiles API requires that only a PermissionString or PermissionKey header can be passed in
+		// but not both. Since we are using PermissionKey, clear the PermissionString header. The PermissionKey
+		// header replaces the role of the PermissionString header.
 		u.headersToApply.PermissionString = nil
 	}
 	return "", nil
