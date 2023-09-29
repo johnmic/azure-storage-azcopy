@@ -37,7 +37,7 @@ import (
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/minio/minio-go"
 	"github.com/minio/minio-go/pkg/credentials"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
 )
 
 // ==============================================================================================
