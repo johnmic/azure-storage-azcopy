@@ -29,7 +29,7 @@ import (
 	"unsafe"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 // with the help of an objectIndexer containing the source objects

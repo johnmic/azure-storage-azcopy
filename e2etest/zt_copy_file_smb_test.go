@@ -1,10 +1,11 @@
 package e2etest
 
 import (
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 func TestSMB_FromShareSnapshot(t *testing.T) {

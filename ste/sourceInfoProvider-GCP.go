@@ -8,7 +8,7 @@ import (
 
 	gcpUtils "cloud.google.com/go/storage"
 	"github.com/Azure/azure-pipeline-go/pipeline"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 	"golang.org/x/oauth2/google"
 )
 

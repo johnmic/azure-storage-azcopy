@@ -36,12 +36,12 @@ import (
 	"time"
 
 	gcpUtils "cloud.google.com/go/storage"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 	"google.golang.org/api/iterator"
 
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
+	"github.com/johnmic/azure-storage-azcopy/v10/ste"
 	"github.com/minio/minio-go"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/ste"
 
 	chk "gopkg.in/check.v1"
 

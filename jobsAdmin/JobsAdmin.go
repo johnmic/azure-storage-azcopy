@@ -34,10 +34,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/ste"
+	"github.com/johnmic/azure-storage-azcopy/v10/ste"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 // sortPlanFiles is struct that implements len, swap and less than functions

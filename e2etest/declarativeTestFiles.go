@@ -29,8 +29,8 @@ import (
 	"time"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/cmd"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/cmd"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 ///////////////
@@ -366,7 +366,8 @@ func (*testFiles) copyList(src []interface{}) []interface{} {
 
 // takes a mixed list of (potentially) strings and testObjects, and returns them all as test objects
 // TODO: do we want to continue supporting plain strings in the expectation file lists (for convenience of test coders)
-//   or force them to use f() for every file?
+//
+//	or force them to use f() for every file?
 func (*testFiles) toTestObjects(rawList []interface{}, isFail bool) []*testObject {
 	result := make([]*testObject, 0, len(rawList))
 	for _, r := range rawList {

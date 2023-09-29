@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
 )
 
 const ( // POSIX property metadata

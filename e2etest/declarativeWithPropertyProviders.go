@@ -23,8 +23,8 @@ package e2etest
 import (
 	"time"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/cmd"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/cmd"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 // All the structs in this file have names starting with "with", to make the readability flow when they are used
@@ -173,12 +173,12 @@ func (w with) createObjectProperties() *objectProperties {
 // use createOnly if you want to define properties that should be used when creating an object, but not
 // used when verifying the state of the transferred object. Generally you'll have no use for this.
 // Just use "with", and the test framework will do the right thing.
-//nolint
+// nolint
 type createOnly struct {
 	with
 }
 
-//nolint
+// nolint
 func (createOnly) appliesToVerification() bool {
 	return false
 }
@@ -224,7 +224,8 @@ func (withDirStubMetadata) createObjectProperties() *objectProperties {
 // use withError ONLY on files in the shouldFail section.
 // It allows you to say what the error should be
 // TODO: as at 1 July 2020, we are not actually validating these.  Should we? It could be nice.  If we don't,
-//   remove this type and its usages, and the expectedFailureProvider interface
+//
+//	remove this type and its usages, and the expectedFailureProvider interface
 type withError struct {
 	msg string
 }

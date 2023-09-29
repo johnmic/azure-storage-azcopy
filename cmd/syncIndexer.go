@@ -29,15 +29,13 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common/parallel"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common/parallel"
 )
 
-//
 // Hierarchical object indexer for quickly searching children of a given directory.
 // We keep parent and child relationship only not ancestor. That's said it's flat and hierarchical namespace where all folder at flat level,
 // each folder contains its children. So it helps us take decision on folder. Used by the streaming sync processor.
-//
 type folderIndexer struct {
 	// FolderMap is a map for a folder, which stores map of files in respective folder.
 	// Key here is parent folder f.e dir1/dir2/file.txt the key is dir1/dir2. It has objectIndexer map for this path.
@@ -84,8 +82,9 @@ func storedObjectSize(so StoredObject) int64 {
 // look it up for finding if the object needs to be sync'ed.
 //
 // Note: Source Traverser blindly saves all the scanned objects for Target Traverser to look up.
-//       All the intelligence regarding which object needs to be sync'ed, whether it's a full sync or
-//       just metadata sync, is in the Target Traverser.
+//
+//	All the intelligence regarding which object needs to be sync'ed, whether it's a full sync or
+//	just metadata sync, is in the Target Traverser.
 func (i *folderIndexer) store(storedObject StoredObject) (err error) {
 	// It is safe to index all StoredObjects just by relative path, regardless of their entity type, because
 	// no filesystem allows a file and a folder to have the exact same full path.  This is true of
@@ -176,10 +175,8 @@ func (i *folderIndexer) store(storedObject StoredObject) (err error) {
 	return
 }
 
-//
 // This MUST be called only with CFDMode==Ctime and MetadataOnlySync==true. This forces caller (target traverser) to use the more efficient ListDir for
 // getting file properties in bulk instead of querying individual file properties.
-//
 func (i *folderIndexer) filesChangedInDirectory(relativePath string, lastSyncTime time.Time) bool {
 	var lcRelativePath string
 
@@ -209,13 +206,11 @@ func (i *folderIndexer) filesChangedInDirectory(relativePath string, lastSyncTim
 	return false
 }
 
-//
 // Given the relative path of a directory this returns the StoredObject corresponding to that directory.
 // To be precise it returns the StoredObject stored in folderMap["dir1/dir2"]["."] for directory named "dir1/dir2."
 //
 // This MUST be called *only* by HasDirectoryChangedSinceLastSync() when it wants to find out if a directory dequeued from 'tqueue' must
 // be enumerated at the target. Such a StoredObject would have been added by the source traverser for each directory it adds to tqueue.
-//
 func (i *folderIndexer) getStoredObject(relativePath string) StoredObject {
 	var lcRelativePath, lcFolderName string
 
@@ -249,9 +244,7 @@ func (i *folderIndexer) getStoredObject(relativePath string) StoredObject {
 	panic(fmt.Sprintf("Stored Object for relative path[%s] and folderName[%s] not found", relativePath, lcFolderName))
 }
 
-//
 // Given the relative path of a directory this returns whether directory exist in ObjectIndexerMap or not.
-//
 func (i *folderIndexer) directoryNotYetProcessed(relativePath string) bool {
 	var lcRelativePath, lcFolderName string
 
@@ -310,8 +303,8 @@ func (i *folderIndexer) traverse(processor objectProcessor, filters []ObjectFilt
 
 // the objectIndexer is essential for the generic sync enumerator to work
 // it can serve as a:
-// 		1. objectProcessor: accumulate a lookup map with given StoredObjects
-//		2. resourceTraverser: go through the entities in the map like a traverser
+//  1. objectProcessor: accumulate a lookup map with given StoredObjects
+//  2. resourceTraverser: go through the entities in the map like a traverser
 type objectIndexer struct {
 	indexMap map[string]StoredObject
 

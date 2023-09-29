@@ -34,12 +34,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 	"github.com/minio/minio-go/pkg/credentials"
 	chk "gopkg.in/check.v1"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/ste"
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
+	"github.com/johnmic/azure-storage-azcopy/v10/ste"
 	"github.com/minio/minio-go"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
@@ -193,7 +193,8 @@ func getReaderToRandomBytes(n int) *bytes.Reader {
 }
 
 // todo: consider whether to replace with common.NewRandomDataGenerator, which is
-//    believed to be faster
+//
+//	believed to be faster
 func getRandomDataAndReader(n int) (*bytes.Reader, []byte) {
 	data := make([]byte, n)
 	rand.Read(data)

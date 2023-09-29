@@ -21,12 +21,13 @@
 package cmd
 
 import (
-	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
-	chk "gopkg.in/check.v1"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/Azure/azure-storage-blob-go/azblob"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
+	chk "gopkg.in/check.v1"
 )
 
 type transferParams struct {

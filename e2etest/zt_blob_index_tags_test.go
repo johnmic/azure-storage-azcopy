@@ -21,8 +21,9 @@
 package e2etest
 
 import (
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
 	"testing"
+
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 // ================================  Copy: Setting Tags ========================================================

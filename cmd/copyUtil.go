@@ -27,13 +27,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/jobsAdmin"
+	"github.com/johnmic/azure-storage-azcopy/v10/jobsAdmin"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
 	"github.com/aymanjarrousms/azure-storage-file-go/azfile"
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 const (

@@ -22,9 +22,10 @@ package cmd
 
 import (
 	"context"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
-	chk "gopkg.in/check.v1"
 	"strings"
+
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
+	chk "gopkg.in/check.v1"
 )
 
 type credentialUtilSuite struct{}

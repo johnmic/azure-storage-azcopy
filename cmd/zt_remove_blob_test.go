@@ -23,14 +23,15 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
-	chk "gopkg.in/check.v1"
 	"log"
 	"net/url"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/Azure/azure-storage-blob-go/azblob"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
+	chk "gopkg.in/check.v1"
 )
 
 func (s *cmdIntegrationSuite) TestRemoveSingleBlob(c *chk.C) {

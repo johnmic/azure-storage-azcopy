@@ -3,7 +3,7 @@
 
 package ste
 
-import "github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+import "github.com/johnmic/azure-storage-azcopy/v10/common"
 
 func (b blobFolderSender) getExtraProperties() error {
 	if b.jptm.Info().PreservePOSIXProperties {

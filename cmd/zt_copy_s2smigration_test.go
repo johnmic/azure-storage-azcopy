@@ -28,8 +28,8 @@ import (
 	"time"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 	chk "gopkg.in/check.v1"
 )
 
@@ -872,7 +872,7 @@ func (s *cmdIntegrationSuite) TestS2SCopyFromContainerToContainerNoPreserveBlobT
 	})
 }
 
-//Attempt to copy from a page blob to a block blob
+// Attempt to copy from a page blob to a block blob
 func (s *cmdIntegrationSuite) TestS2SCopyFromPageToBlockBlob(c *chk.C) {
 	c.Skip("Enable after setting Account to non-HNS")
 	bsu := getBSU()
@@ -925,7 +925,7 @@ func (s *cmdIntegrationSuite) TestS2SCopyFromPageToBlockBlob(c *chk.C) {
 	})
 }
 
-//Attempt to copy from a block blob to a page blob
+// Attempt to copy from a block blob to a page blob
 func (s *cmdIntegrationSuite) TestS2SCopyFromBlockToPageBlob(c *chk.C) {
 	bsu := getBSU()
 
@@ -977,7 +977,7 @@ func (s *cmdIntegrationSuite) TestS2SCopyFromBlockToPageBlob(c *chk.C) {
 	})
 }
 
-//Attempt to copy from a block blob to an append blob
+// Attempt to copy from a block blob to an append blob
 func (s *cmdIntegrationSuite) TestS2SCopyFromBlockToAppendBlob(c *chk.C) {
 	bsu := getBSU()
 
@@ -1029,7 +1029,7 @@ func (s *cmdIntegrationSuite) TestS2SCopyFromBlockToAppendBlob(c *chk.C) {
 	})
 }
 
-//Attempt to copy from an append blob to a block blob
+// Attempt to copy from an append blob to a block blob
 func (s *cmdIntegrationSuite) TestS2SCopyFromAppendToBlockBlob(c *chk.C) {
 	c.Skip("Enable after setting Account to non-HNS")
 	bsu := getBSU()
@@ -1082,7 +1082,7 @@ func (s *cmdIntegrationSuite) TestS2SCopyFromAppendToBlockBlob(c *chk.C) {
 	})
 }
 
-//Attempt to copy from a page blob to an append blob
+// Attempt to copy from a page blob to an append blob
 func (s *cmdIntegrationSuite) TestS2SCopyFromPageToAppendBlob(c *chk.C) {
 	c.Skip("Enable after setting Account to non-HNS")
 	bsu := getBSU()
@@ -1135,7 +1135,7 @@ func (s *cmdIntegrationSuite) TestS2SCopyFromPageToAppendBlob(c *chk.C) {
 	})
 }
 
-//Attempt to copy from an append blob to a page blob
+// Attempt to copy from an append blob to a page blob
 func (s *cmdIntegrationSuite) TestS2SCopyFromAppendToPageBlob(c *chk.C) {
 	c.Skip("Enable after setting Account to non-HNS")
 	bsu := getBSU()

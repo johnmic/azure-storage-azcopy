@@ -28,7 +28,7 @@ import (
 	"github.com/Azure/azure-pipeline-go/pipeline"
 	"github.com/Azure/azure-storage-blob-go/azblob"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 type urlToPageBlobCopier struct {
@@ -142,7 +142,7 @@ func (c *urlToPageBlobCopier) GetDestinationLength() (int64, error) {
 
 // isolate the logic to fetch page ranges for a page blob, and check whether a given range has data
 // for two purposes:
-//	1. capture the necessary info to do so, so that fetchPages can be invoked anywhere
+//  1. capture the necessary info to do so, so that fetchPages can be invoked anywhere
 //  2. open to extending the logic, which could be re-used for both download and s2s scenarios
 type pageRangeOptimizer struct {
 	srcPageBlobURL azblob.PageBlobURL

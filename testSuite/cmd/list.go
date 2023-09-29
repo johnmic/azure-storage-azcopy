@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/ste"
+	"github.com/johnmic/azure-storage-azcopy/v10/ste"
 	"github.com/spf13/cobra"
 )
 

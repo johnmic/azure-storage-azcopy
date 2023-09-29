@@ -30,8 +30,8 @@ import (
 	"time"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/sddl"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/sddl"
 )
 
 // E.g. if we have enumerationSuite/TestFooBar/Copy-LocalBlob the scenario is "Copy-LocalBlob"

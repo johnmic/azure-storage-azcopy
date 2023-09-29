@@ -31,12 +31,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/jobsAdmin"
+	"github.com/johnmic/azure-storage-azcopy/v10/jobsAdmin"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/ste"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/ste"
 
 	"github.com/spf13/cobra"
 )
@@ -139,8 +139,9 @@ func (raw *RawSyncCmdArgs) parseCFDMode() (common.CFDMode, error) {
 }
 
 // TODO: Need to get system available memory and check with this MaxObjectIndexerMapSizeInGB. If MaxObjectIndexerMapSizeInGB more than
-//       system available memory than issue warning message. If MaxObjectIndexerMapSizeInGB is nil, in that case need to set it to 80% of
-//       available memory. Getting system available memory need to be done for both windows and linux.
+//
+//	system available memory than issue warning message. If MaxObjectIndexerMapSizeInGB is nil, in that case need to set it to 80% of
+//	available memory. Getting system available memory need to be done for both windows and linux.
 func (raw *RawSyncCmdArgs) parseMaxObjectIndexerMapInGB() (uint32, error) {
 
 	// Default case where user not specified any value.

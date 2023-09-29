@@ -21,11 +21,11 @@
 package cmd
 
 import (
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 	chk "gopkg.in/check.v1"
 )
 
-//Test dfs endpoints are cooked to blob endpoints
+// Test dfs endpoints are cooked to blob endpoints
 func (s *cmdIntegrationSuite) TestSyncS2SWithDFS(c *chk.C) {
 	src := "https://myaccount1.dfs.core.windows.net/container1/"
 	dst := "https://myaccount2.dfs.core.windows.net/container2/"

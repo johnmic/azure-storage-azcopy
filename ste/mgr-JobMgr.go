@@ -32,7 +32,7 @@ import (
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 var _ IJobMgr = &jobMgr{}
@@ -786,13 +786,15 @@ func (jm *jobMgr) CloseLog() {
 
 // DeferredCleanupJobMgr cleanup all the jobMgr resources.
 // Warning: DeferredCleanupJobMgr should be called from JobMgrCleanup().
-//          As this function neither threadsafe nor idempotient. So if DeferredCleanupJobMgr called
-//          mulitple times, it may stuck as receiving channel already closed. Where as JobMgrCleanup()
-//          safe in that sense it will do the cleanup only once.
+//
+//	As this function neither threadsafe nor idempotient. So if DeferredCleanupJobMgr called
+//	mulitple times, it may stuck as receiving channel already closed. Where as JobMgrCleanup()
+//	safe in that sense it will do the cleanup only once.
 //
 // TODO: Add JobsAdmin reference to each JobMgr so that in any circumstances JobsAdmin should not freed,
-//       while jobMgr running. Whereas JobsAdmin store number JobMgr running  at any time.
-//       At that point DeferredCleanupJobMgr() will delete jobMgr from jobsAdmin map.
+//
+//	while jobMgr running. Whereas JobsAdmin store number JobMgr running  at any time.
+//	At that point DeferredCleanupJobMgr() will delete jobMgr from jobsAdmin map.
 func (jm *jobMgr) DeferredCleanupJobMgr() {
 	jm.Log(pipeline.LogInfo, "DeferredCleanupJobMgr called")
 

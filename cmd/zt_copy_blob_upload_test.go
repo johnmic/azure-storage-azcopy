@@ -21,13 +21,14 @@
 package cmd
 
 import (
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
-	chk "gopkg.in/check.v1"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
+	chk "gopkg.in/check.v1"
 )
 
 func (s *cmdIntegrationSuite) TestIncludeDirSimple(c *chk.C) {

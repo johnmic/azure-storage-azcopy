@@ -12,7 +12,7 @@ import (
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
 	"github.com/spf13/cobra"
 )
 

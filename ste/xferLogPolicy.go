@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 // This file is copied and extended from Azure Storage Blob Go SDK.
@@ -242,10 +242,10 @@ func stack() []byte {
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////
 // Redact phase useful for blob and file service only. For other services,
 // this method can directly return request.Request.
-///////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////
 func prepareRequestForServiceLogging(request pipeline.Request) *http.Request {
 	req := request
 

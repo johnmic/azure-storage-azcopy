@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
 	"github.com/aymanjarrousms/azure-storage-file-go/azfile"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 	"golang.org/x/sys/windows"
 )
 

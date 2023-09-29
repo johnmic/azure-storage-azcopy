@@ -21,10 +21,11 @@
 package cmd
 
 import (
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
-	chk "gopkg.in/check.v1"
 	"net/url"
 	"strings"
+
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
+	chk "gopkg.in/check.v1"
 )
 
 func (s *cmdIntegrationSuite) TestRemoveSingleFile(c *chk.C) {

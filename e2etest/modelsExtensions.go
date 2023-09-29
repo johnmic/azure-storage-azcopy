@@ -24,7 +24,7 @@ import (
 	"reflect"
 
 	"github.com/JeffreyRichter/enum/enum"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 // An extension to common.ELocation to support smb mount location

@@ -29,12 +29,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common/parallel"
+	"github.com/johnmic/azure-storage-azcopy/v10/common/parallel"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 	"github.com/aymanjarrousms/azure-storage-file-go/azfile"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 // allow us to iterate through a path pointing to the file endpoint
@@ -479,7 +479,7 @@ func newFileTraverser(rawURL *url.URL, p pipeline.Pipeline, ctx context.Context,
 	return
 }
 
-//  allows polymorphic treatment of folders and files
+// allows polymorphic treatment of folders and files
 type azfileEntity struct {
 	name                 string
 	contentLength        int64

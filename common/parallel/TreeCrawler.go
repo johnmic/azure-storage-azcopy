@@ -26,10 +26,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
-//
 // If all the scanner goroutines add to a single channel from where a single goroutine reads and store the entries in
 // indexer map, this single goroutine becomes the bottleneck. Hence we need multiple goutines to process the entries
 // added by the multiple scanner goutines. To make sure all entries of a directory including the special
@@ -37,7 +36,6 @@ import (
 // pick one of these channel, thus ensuring all entries of a directory are added to the same channel.
 //
 // We hardcode this number to 4 for now as it seems enough to handle entries queued by 16 scanner goroutines.
-//
 const numOfParallelProcess = 4
 
 type crawler struct {
@@ -267,13 +265,11 @@ func (c *crawler) workerLoop(ctx context.Context, wg *sync.WaitGroup, workerInde
 
 const maxQueueDirectories = 100 * 1000
 
-//
 // readTqueue() dequeues directory names added by the source traverser and appends them to unstartedDirs.
 // In order to keep the memory requirement in check for the cases when source traverser is going very fast
 // and maxObjectIndexerSizeInGB is not able to clamp it (because there are lot of small directories), we
 // put a limit of 1 Million outstanding directories. After that readTqueue() will not read any more
 // directories from tqueue which will put a back pressure on the source traverser.
-//
 func (c *crawler) readTqueue() {
 	tqueue := c.orderedTqueue.GetTqueue()
 	for tDir := range tqueue {

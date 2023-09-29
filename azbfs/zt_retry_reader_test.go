@@ -5,11 +5,12 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
 	"io"
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
 
 	chk "gopkg.in/check.v1"
 )

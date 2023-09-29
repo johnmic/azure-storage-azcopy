@@ -31,9 +31,9 @@ import (
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common/parallel"
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common/parallel"
 )
 
 type blobFSTraverser struct {
@@ -232,7 +232,6 @@ func (t *blobFSTraverser) parallelSyncTargetEnumeration(directoryURL azbfs.Direc
 	return nil
 }
 
-//
 // Given a directory find out if it has changed since the last sync. A “changed” directory could mean one or more of the following:
 // 1. One or more new files/subdirs created inside the directory.
 // 2. One or more files/subdirs deleted.
@@ -302,7 +301,6 @@ func (t *blobFSTraverser) generateDirUrl(blobFSUrlParts azbfs.BfsURLParts, relat
 	return azbfs.NewDirectoryURL(fileUrl, t.p)
 }
 
-//
 // waitTillAllAncestorsAreProcessed will block the calling thread till all
 // ancestors of 'currentDirPath' are processed and removed from ObjectIndexerMap.
 // f.e., if 'currentDirPath' is "a/b/c/d", then it'll wait till there are any of the
@@ -316,7 +314,6 @@ func (t *blobFSTraverser) generateDirUrl(blobFSUrlParts azbfs.BfsURLParts, relat
 // directory has any ancestor that is renamed, it means that the directory
 // MUST be enumerated in order to copy its contents and hence we must know
 // that when we process the directory from tqueue.
-//
 func (t *blobFSTraverser) waitTillAllAncestorsAreProcessed(currentDirPath string) {
 	//
 	// If possiblyRenamedMap is nil then we are not doing the special rename handling, hence
@@ -378,21 +375,19 @@ func (t *blobFSTraverser) waitTillAllAncestorsAreProcessed(currentDirPath string
 	}
 }
 
-//
 // hasAnAncestorThatIsPossiblyRenamed checks all ancestors of 'currentDirPath' starting
 // from the immediate parent and walking upwards till the root and returns
 // true if any of the ancestor is present in 'possiblyRenamedMap'.
 // Directories are added to 'possiblyRenamedMap' in two places:
-// 1. For directories that exist in the target, it's added to
-//    'possiblyRenamedMap' if the target directory's inode is
-//    different from source directory's inode.
-// 2. For directories that don't exist in the target, all of them are added
-//    to 'possiblyRenamedMap'. It could very well be a new directory but
-//    that doesn't cause any additional overhead since new directories
-//    are anyway attempted enumeration.
+//  1. For directories that exist in the target, it's added to
+//     'possiblyRenamedMap' if the target directory's inode is
+//     different from source directory's inode.
+//  2. For directories that don't exist in the target, all of them are added
+//     to 'possiblyRenamedMap'. It could very well be a new directory but
+//     that doesn't cause any additional overhead since new directories
+//     are anyway attempted enumeration.
 //
 // Note: This must never be called for CFDmode==TargetCompare.
-//
 func (t *blobFSTraverser) hasAnAncestorThatIsPossiblyRenamed(currentDirPath string) bool {
 	if t.cfdMode == common.CFDModeFlags.TargetCompare() {
 		panic(fmt.Sprintf("hasAnAncestorThatIsPossiblyRenamed called for currentDirPath(%s) with TargetCompare", currentDirPath))

@@ -21,9 +21,10 @@
 package e2etest
 
 import (
-	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
 	"testing"
+
+	"github.com/Azure/azure-storage-blob-go/azblob"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 func TestTier_V2ToClassicAccount(t *testing.T) {

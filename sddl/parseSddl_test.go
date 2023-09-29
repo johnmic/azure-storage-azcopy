@@ -25,7 +25,7 @@ import (
 
 	chk "gopkg.in/check.v1"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/sddl"
+	"github.com/johnmic/azure-storage-azcopy/v10/sddl"
 )
 
 // Hookup to the testing framework

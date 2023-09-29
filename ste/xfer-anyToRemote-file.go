@@ -35,7 +35,7 @@ import (
 	"github.com/Azure/azure-storage-blob-go/azblob"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 // This code for blob tier safety is _not_ safe for multiple jobs at once.
@@ -82,7 +82,7 @@ func prepareDestAccountInfo(bURL azblob.BlobURL, jptm IJobPartTransferMgr, ctx c
 	}
 }
 
-//// TODO: Infer availability based upon blob size as well, for premium page blobs.
+// // TODO: Infer availability based upon blob size as well, for premium page blobs.
 func BlobTierAllowed(destTier azblob.AccessTierType) bool {
 	// If we failed to get the account info, just return true.
 	// This is because we can't infer whether it's possible or not, and the setTier operation could possibly succeed (or fail)

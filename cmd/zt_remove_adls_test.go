@@ -24,8 +24,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 	chk "gopkg.in/check.v1"
 )
 

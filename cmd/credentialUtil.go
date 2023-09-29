@@ -31,7 +31,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/jobsAdmin"
+	"github.com/johnmic/azure-storage-azcopy/v10/jobsAdmin"
 
 	"github.com/minio/minio-go/pkg/s3utils"
 
@@ -39,9 +39,9 @@ import (
 	"github.com/Azure/azure-storage-blob-go/azblob"
 	"github.com/aymanjarrousms/azure-storage-file-go/azfile"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/azbfs"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/ste"
+	"github.com/johnmic/azure-storage-azcopy/v10/azbfs"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/ste"
 )
 
 var once sync.Once
