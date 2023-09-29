@@ -29,12 +29,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common/parallel"
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/jobsAdmin"
+	"github.com/johnmic/azure-storage-azcopy/v10/common/parallel"
+	"github.com/johnmic/azure-storage-azcopy/v10/jobsAdmin"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 
-	"github.com/aymanjarrousms/azure-storage-azcopy/v10/common"
+	"github.com/johnmic/azure-storage-azcopy/v10/common"
 )
 
 // -------------------------------------- Implemented Enumerators -------------------------------------- \\
